@@ -1,4 +1,5 @@
 package com.filoshare.app.models.user;
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -39,7 +41,7 @@ import lombok.NoArgsConstructor;
 @Table(
     name = "filoshare_users"
 )
-public class User implements UserDetails {
+public class User implements UserDetails, Serializable{
     
     @Id
     @Column(name = "user_id")
@@ -54,22 +56,22 @@ public class User implements UserDetails {
     private String email;
     private String password;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role", referencedColumnName = "role")
-    )
-    private List<Role> roles;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
+    @Column(name = "role")
+    private List<String> roles;
 
     @PrePersist
     public void prePersist() {
         userId = UUID.randomUUID().toString();
+        System.out.println("USER : " + this);
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getRole())).collect(Collectors.toSet());
+        return roles.stream()
+            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+            .collect(Collectors.toSet());
     }
     
     @Override
