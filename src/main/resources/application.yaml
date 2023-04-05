@@ -1,5 +1,11 @@
 server:
     port: 8080
+    server:
+        servlet:
+            session:
+                cookie:
+                    http-only: true
+                    secure: true
 
 spring:
     datasource:
@@ -11,3 +17,15 @@ spring:
         hibernate:
             ddl-auto: update
         show-sql: true
+
+    mail:
+        host: smtp.gmail.com
+        port: 587    
+        username: paavangpt@gmail.com
+        password: modvpbkdtumapfry
+        properties:
+            mail:
+                smtp:
+                    auth: true
+                    starttls:
+                        enable: true

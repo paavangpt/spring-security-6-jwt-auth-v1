@@ -55,6 +55,7 @@ public class User implements UserDetails, Serializable{
 
     private String email;
     private String password;
+    private boolean verified;
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
@@ -64,6 +65,7 @@ public class User implements UserDetails, Serializable{
     @PrePersist
     public void prePersist() {
         userId = UUID.randomUUID().toString();
+        verified = false;
         System.out.println("USER : " + this);
     }
 

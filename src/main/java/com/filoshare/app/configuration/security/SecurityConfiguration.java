@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.SecurityBuilder;
 import org.springframework.security.config.annotation.SecurityConfigurer;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -67,35 +68,36 @@ public class SecurityConfiguration {
     @Autowired
     private JwtService jwtService;
 
-    @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        return new JwtAuthenticationFilter(jwtService);
-    }
+    @Autowired
+    public JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf().disable();
 
-        http.addFilterBefore(jwtAuthenticationFilter(), BasicAuthenticationFilter.class);
-
+        
         http.authorizeHttpRequests()
             .requestMatchers("/sign-up").permitAll()
+            .requestMatchers("/authenticate").permitAll()
             .requestMatchers("/public").permitAll()
             .requestMatchers("/admin").hasRole("ROLE_ADMIN")
             .anyRequest().authenticated();
-
+            
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+        
         http.sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
 
         http.formLogin()
-        .loginProcessingUrl("/log-in")
-        .successHandler(authenticationSuccessHandler)
+        // .loginProcessingUrl("/log-in")
+        // .successHandler(authenticationSuccessHandler)
         .and().authenticationProvider(authenticationProvider())
         .logout().logoutUrl("/logout")
+        .logoutSuccessUrl("/login")
         .invalidateHttpSession(true)
         .deleteCookies("JSESSIONID")
-        .permitAll();
+        ;
             // .defaultSuccessUrl("/welcome", true);
         return http.build();
 
@@ -107,6 +109,11 @@ public class SecurityConfiguration {
         authenticationProvider.setUserDetailsService(userDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         return authenticationProvider;
+    }
+
+    @Bean 
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 
     // @Bean

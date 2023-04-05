@@ -2,6 +2,7 @@ package com.filoshare.app.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.filoshare.app.models.user.MyUserDetails;
+import com.filoshare.app.utils.PrintFormatter;
 
 import io.jsonwebtoken.Jwts;
 
@@ -28,8 +30,16 @@ public class MainController {
         return "Welcome Captain! 🙋‍♂️";
     }
 
+    @GetMapping("/info")
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public String infoPage() {
+        new PrintFormatter().print("Info page biti!");
+        return "Hola infoing!";
+    }
+
     @GetMapping("/")
     public String homePage() {
+        new PrintFormatter().print("Aaya re idhar!");
         return "Welcome to the home page dude!";
     }
 
