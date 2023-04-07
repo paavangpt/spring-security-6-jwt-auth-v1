@@ -4,6 +4,8 @@ import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 
+import com.filoshare.app.utils.PrintFormatter;
+
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -22,6 +24,8 @@ public class EmailSenderService {
         msg.setTo(to);
         msg.setSubject(subject);
         msg.setText(body);
+
+        new PrintFormatter().print("Aur bro, ki haal chaal?");
 
         mailSender.send(msg);
     }

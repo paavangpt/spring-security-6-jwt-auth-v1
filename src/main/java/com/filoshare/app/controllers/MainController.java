@@ -31,15 +31,12 @@ public class MainController {
     }
 
     @GetMapping("/info")
-    @PreAuthorize("hasRole('ROLE_USER')")
     public String infoPage() {
-        new PrintFormatter().print("Info page biti!");
         return "Hola infoing!";
     }
 
     @GetMapping("/")
     public String homePage() {
-        new PrintFormatter().print("Aaya re idhar!");
         return "Welcome to the home page dude!";
     }
 

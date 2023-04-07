@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,8 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
-
-        new PrintFormatter().print(request.getRequestURI());
         
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer")){
@@ -57,14 +56,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if(userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
                 if(jwtService.isTokenValid(token, userEmail)) {
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, userDetails.getAuthorities());
+                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userEmail, userDetails.getPassword(), userDetails.getAuthorities());
+                    new PrintFormatter().print("Above Printing");
                     authToken.setDetails(
                         new WebAuthenticationDetailsSource().buildDetails(request)
                     );
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                    
+                    var newContext = SecurityContextHolder.createEmptyContext();
+                    newContext.setAuthentication(authToken);
+                    SecurityContextHolder.setContext(newContext);
                 }
             }
-            new PrintFormatter().print(SecurityContextHolder.getContext().getAuthentication());
             // System.out.println("Email is : " + userEmail);
             // System.out.println("The request got filtered!");
             filterChain.doFilter(request, response);

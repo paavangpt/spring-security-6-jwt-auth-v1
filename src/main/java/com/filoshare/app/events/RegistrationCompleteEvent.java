@@ -11,11 +11,13 @@ public class RegistrationCompleteEvent extends ApplicationEvent {
 
     private User user;
     private String applicationUrl;
+    private String token;
 
-    public RegistrationCompleteEvent(User user, String applicationUrl) {
+    public RegistrationCompleteEvent(User user, String applicationUrl, String token) {
         super(user);
         this.user = user;
         this.applicationUrl = applicationUrl;
+        this.token = token;
     }
 
 }

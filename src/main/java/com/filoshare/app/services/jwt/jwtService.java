@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.filoshare.app.utils.PrintFormatter;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoder;
@@ -72,5 +73,11 @@ public class JwtService {
     private boolean isTokenExpired(String token) {
         return extractExpiration(token).before(new Date());
     }
+
+    // private String invalidateToken(String token) {
+    //     Jwts.
+    //     Claims claims = extractAllClaims(token);
+    //     claims.setExpiration(new Date());
+    // }
 
 }

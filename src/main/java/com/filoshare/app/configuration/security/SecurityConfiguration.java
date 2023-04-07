@@ -43,6 +43,7 @@ import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.session.InvalidSessionStrategy;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -98,6 +99,7 @@ public class SecurityConfiguration {
         .invalidateHttpSession(true)
         .deleteCookies("JSESSIONID")
         ;
+
             // .defaultSuccessUrl("/welcome", true);
         return http.build();
 
